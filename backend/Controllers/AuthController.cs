@@ -5,7 +5,7 @@ using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 
-namespace Blog.Controllers;
+namespace backend.Controllers;
 
 [ApiController]
 [Route("api/auth")]

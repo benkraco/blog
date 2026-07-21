@@ -36,9 +36,11 @@ builder.Services.AddSingleton<DbConnectionFactory>();
 
 // Repositories
 builder.Services.AddScoped<UserRepository>();
+builder.Services.AddScoped<PostRepository>();
 
 // Services
 builder.Services.AddScoped<UserService>();
+builder.Services.AddScoped<PostService>();
 
 var app = builder.Build();
 
