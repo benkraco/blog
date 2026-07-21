@@ -1,23 +1,56 @@
 using backend.Data;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using backend.Repositories;
+using backend.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-builder.Services.AddOpenApi();
-
 builder.Services.AddControllers();
 
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
+
+builder.Services
+    .AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddCookie(options =>
+    {
+        options.Cookie.Name = "Blog.Auth";
+
+        options.LoginPath = "/api/auth/login";
+
+        options.LogoutPath = "/api/auth/logout";
+
+        options.ExpireTimeSpan = TimeSpan.FromDays(30);
+
+        options.SlidingExpiration = true;
+
+        options.Cookie.HttpOnly = true;
+
+        options.Cookie.SameSite = SameSiteMode.Lax;
+
+        options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+    });
+
+// Database
 builder.Services.AddSingleton<DbConnectionFactory>();
+
+// Repositories
+builder.Services.AddScoped<UserRepository>();
+
+// Services
+builder.Services.AddScoped<UserService>();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.MapOpenApi();
-}
+app.UseSwagger();
+app.UseSwaggerUI();
 
 app.UseHttpsRedirection();
+
+app.UseAuthentication();
+
+app.UseAuthorization();
+
+app.MapControllers();
 
 app.Run();
