@@ -1,5 +1,6 @@
 using backend.Services;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 
 namespace backend.Controllers;
 
@@ -49,6 +50,7 @@ public class TagController : ControllerBase
     }
 
     [HttpPost]
+    [Authorize]
     public async Task<IActionResult> Create([FromBody] string name)
     {
         try
@@ -72,6 +74,7 @@ public class TagController : ControllerBase
     }
 
     [HttpDelete("{id:guid}")]
+    [Authorize]
     public async Task<IActionResult> Delete(Guid id)
     {
         var deleted = await _tagService.DeleteTagAsync(id);

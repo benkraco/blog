@@ -31,16 +31,32 @@ builder.Services
         options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
     });
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("Frontend", policy =>
+    {
+        policy
+            .WithOrigins("http://localhost:5173")
+            .AllowAnyHeader()
+            .AllowAnyMethod()
+            .AllowCredentials();
+    });
+});
+
 // Database
 builder.Services.AddSingleton<DbConnectionFactory>();
 
 // Repositories
 builder.Services.AddScoped<UserRepository>();
 builder.Services.AddScoped<PostRepository>();
+builder.Services.AddScoped<TagRepository>();
+builder.Services.AddScoped<PostTagRepository>();
 
 // Services
 builder.Services.AddScoped<UserService>();
 builder.Services.AddScoped<PostService>();
+builder.Services.AddScoped<TagService>();
+builder.Services.AddScoped<PostTagService>();
 
 var app = builder.Build();
 
@@ -49,8 +65,9 @@ app.UseSwaggerUI();
 
 app.UseHttpsRedirection();
 
-app.UseAuthentication();
+app.UseCors("Frontend");
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
