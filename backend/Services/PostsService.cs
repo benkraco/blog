@@ -23,6 +23,11 @@ public class PostService
         return await _postRepository.GetByIdAsync(id);
     }
 
+    public async Task<Post?> GetPostBySlugAsync(string slug)
+    {
+        return await _postRepository.GetBySlugAsync(slug);
+    }
+
     public async Task<Post> CreateAsync(CreatePostRequest request)
     {
         if (string.IsNullOrWhiteSpace(request.Title))

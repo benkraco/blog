@@ -37,6 +37,19 @@ public class PostController : ControllerBase
         return Ok(post);
     }
 
+    [HttpGet("slug/{slug}")]
+    public async Task<IActionResult> GetPostBySlug(string slug)
+    {
+        var post = await _postService.GetPostBySlugAsync(slug);
+
+        if (post == null)
+        {
+            return NotFound();
+        }
+
+        return Ok(post);
+    }
+
     [HttpPost]
     [Authorize]
     public async Task<IActionResult> CreatePost(

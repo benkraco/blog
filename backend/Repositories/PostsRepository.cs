@@ -38,6 +38,19 @@ public class PostRepository
         return await connection.QuerySingleOrDefaultAsync<Post>(sql, new { Id = id });
     }
 
+    public async Task<Post?> GetBySlugAsync(string slug)
+    {
+        using var connection = _factory.Create();
+
+        const string sql = """
+            SELECT *
+            FROM "Posts"
+            WHERE slug = @Slug
+            """;
+
+        return await connection.QuerySingleOrDefaultAsync<Post>(sql, new { Slug = slug });
+    }
+
     public async Task<bool> ExistsBySlugAsync(string slug)
     {
         using var connection = _factory.Create();
@@ -65,7 +78,7 @@ public class PostRepository
                 content,
                 publishedAt,
                 updatedAt,
-                createdAt,
+                createdAt
             )
             VALUES (
                 @Id,
@@ -74,7 +87,7 @@ public class PostRepository
                 @Content,
                 @PublishedAt,
                 @UpdatedAt,
-                @CreatedAt,
+                @CreatedAt
             )
             RETURNING *
             """;
