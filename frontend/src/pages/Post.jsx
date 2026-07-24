@@ -1,9 +1,12 @@
-function App() {
-    return (
-        <div>
-            <h1>Hola aca estaria un posteo ponele ahhh</h1>
-        </div>
-    );
+import BlogWindow from "../components/blog/BlogWindow";
+import PostContent from '../components/blog/PostContent'
+
+function Post() {
+  return (
+    <BlogWindow>
+      <PostContent />
+    </BlogWindow>
+  );
 }
 
-export default App;
+export default Post;

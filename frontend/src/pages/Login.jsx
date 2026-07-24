@@ -1,9 +1,14 @@
-function App() {
-    return (
-        <div>
-            <h1>Hola este es el login</h1>
-        </div>
-    );
+import PageTitle from "../components/ui/PageTitle";
+
+function Login() {
+  return (
+    <>
+      <PageTitle title="Login" />
+      <div>
+        <p>Hola este es el login</p>
+      </div>
+    </>
+  );
 }
 
-export default App;
+export default Login;

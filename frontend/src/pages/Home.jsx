@@ -1,44 +1,16 @@
-import { useEffect, useState } from "react";
-import { getAllPosts } from "../services/postApi";
+import BlogWindow from "../components/blog/BlogWindow";
+import PostList from "../components/blog/PostList";
+import PageTitle from "../components/ui/PageTitle";
 
-function App() {
-  const [posts, setPosts] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-
-  useEffect(() => {
-    async function loadPosts() {
-      try {
-        const data = await getAllPosts();
-        setPosts(data);
-      } catch (error) {
-        setError("No se pudieron cargar los posts");
-      } finally {
-        setLoading(false);
-      }
-    }
-
-    loadPosts();
-  }, []);
-
-  if (loading) {
-    return <p>Cargando posts...</p>;
-  }
-
-  if (error) {
-    return <p>{error}</p>;
-  }
+function Home() {
   return (
-    <div>
-      <h1>Home</h1>
-      {posts.map((post) => (
-        <article key={post.id}>
-          <h2>{post.title}</h2>
-          <p>{post.slug}</p>
-        </article>
-      ))}
-    </div>
+    <>
+      <PageTitle title="Home" />
+      <BlogWindow>
+        <PostList />
+      </BlogWindow>
+    </>
   );
 }
 
-export default App;
+export default Home;

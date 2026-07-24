@@ -10,18 +10,27 @@
   font-style: normal;
 }
 
+html,
+body,
+#root {
+  min-height: 100%;
+}
+
 body {
   background-color: black;
-  margin: 5%;
   font-family: 'Chicago';
   border-radius: 100px;
 }
 
 .layout {
+  width: 90%;
+  min-height: 90dvh;
+  margin: 5dvh auto;
   display: grid;
-  min-height: 100dvh;
   grid-template-rows: auto 1fr auto;
   background-color: white;
+  border-radius: 20px;
+  overflow: hidden;
 }
 
 header {
@@ -58,6 +67,32 @@ header>a {
   margin-left: auto;
 }
 
+main {
+  display: flex;
+  justify-content: center;
+  padding: 4% 5%;
+  background-color: #9f9f9f;
+  background-image: radial-gradient(#6b6b6b 1px, transparent 1px);
+  background-size: 5px 5px;
+}
+
+.blogWindow {
+  width: 100%;
+  max-width: 1400px;
+  height: 100%;
+  background-color: white;
+  border: 8px solid black;
+}
+
+.windowHeader {
+  height: 30px;
+  background-color: black;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  color: white;
+}
+
 footer {
   background-color: #D8D7D5;
   text-align: center;
@@ -65,4 +100,6 @@ footer {
   display: flex;
   gap: 16px;
   justify-content: space-between;
+  padding-left: 1%;
+  padding-right: 1%;
 }
