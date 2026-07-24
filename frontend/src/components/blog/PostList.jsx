@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import { getAllPosts } from "../../services/postApi";
+import LoadingMessage from "../ui/Loading";
+import ErrorMessage from "../ui/Error";
 
 function PostList() {
   const [posts, setPosts] = useState([]);
@@ -22,21 +24,30 @@ function PostList() {
   }, []);
 
   if (loading) {
-    return <p>Cargando posts...</p>;
+    return <LoadingMessage />
   }
 
   if (error) {
-    return <p>{error}</p>;
+    return <ErrorMessage message={error} />
   }
   return (
-    <div>
+    <>
       {posts.map((post) => (
-        <article key={post.id}>
+        <article key={post.id} className="articlePost">
           <h2>{post.title}</h2>
-          <p>{post.slug}</p>
+          <p>
+            {new Date(post.publishedAt).toLocaleString("es-AR", {
+              day: "2-digit",
+              month: "2-digit",
+              year: "numeric",
+              hour: "2-digit",
+              minute: "2-digit",
+              hour12: false,
+            })}
+          </p>
         </article>
       ))}
-    </div>
+    </>
   );
 }
 

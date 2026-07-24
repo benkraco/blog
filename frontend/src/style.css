@@ -24,10 +24,11 @@ body {
 
 .layout {
   width: 90%;
+  height: 90dvh;
   min-height: 90dvh;
   margin: 5dvh auto;
   display: grid;
-  grid-template-rows: auto 1fr auto;
+  grid-template-rows: auto minmax(0, 1fr) auto;
   background-color: white;
   border-radius: 20px;
   overflow: hidden;
@@ -71,6 +72,7 @@ main {
   display: flex;
   justify-content: center;
   padding: 4% 5%;
+  min-height: 0;
   background-color: #9f9f9f;
   background-image: radial-gradient(#6b6b6b 1px, transparent 1px);
   background-size: 5px 5px;
@@ -78,13 +80,17 @@ main {
 
 .blogWindow {
   width: 100%;
-  max-width: 1400px;
   height: 100%;
+  max-width: 1400px;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
   background-color: white;
   border: 8px solid black;
 }
 
 .windowHeader {
+  flex-shrink: 0;
   height: 30px;
   background-color: black;
   display: flex;
@@ -93,13 +99,50 @@ main {
   color: white;
 }
 
+.blogWindowContent {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 5%;
+}
+
+.articlePost {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 2px solid gray;
+  padding: 5px;
+}
+
+.articlePost:hover {
+  background-color: #D8D7D5;
+}
+
+.messageContainer {
+  text-align: center;
+}
+
 footer {
   background-color: #D8D7D5;
-  text-align: center;
   width: 100%;
   display: flex;
-  gap: 16px;
-  justify-content: space-between;
-  padding-left: 1%;
-  padding-right: 1%;
+  align-items: center;
+  padding: 0 1%;
+  box-sizing: border-box;
+}
+
+footer p {
+  width: 33.333%;
+}
+
+footer p:nth-child(1) {
+  text-align: left;
+}
+
+footer p:nth-child(2) {
+  text-align: center;
+}
+
+footer p:nth-child(3) {
+  text-align: right;
 }
