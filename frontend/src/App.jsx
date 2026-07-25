@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 import Layout from "./components/layout/Layout";
+import LayoutLogin from "./components/layout/LayoutLogin";
 
 import Home from "./pages/Home";
 import Post from "./pages/Post";
@@ -15,7 +16,9 @@ function App() {
           <Route path="/post/:slug" element={<Post />} />
         </Route>
 
-        <Route path="/login" element={<Login />} />
+        <Route element={<LayoutLogin />}>
+          <Route path="/login" element={<Login />} />
+        </Route>
       </Routes>
     </BrowserRouter>
   );

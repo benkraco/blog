@@ -68,11 +68,24 @@ header>a {
   margin-left: auto;
 }
 
-main {
+header button {
+  margin-left: auto;
+  font-family: 'Chicago';
+  font-size: x-large;
+  border: none;
+  background: none;
+}
+
+header button:hover {
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.layoutMain {
   display: flex;
   justify-content: center;
-  padding: 4% 5%;
   min-height: 0;
+  padding: 4% 5%;
   background-color: #9f9f9f;
   background-image: radial-gradient(#6b6b6b 1px, transparent 1px);
   background-size: 5px 5px;
@@ -161,6 +174,94 @@ main {
   justify-content: space-between;
   font-size: small;
   margin-top: 1%;
+}
+
+.layoutLogin {
+  grid-template-rows: minmax(0, 1fr);
+}
+
+.loginMain {
+  position: relative;
+  min-height: 0;
+}
+
+.loginTime {
+  position: absolute;
+  top: 5%;
+  left: 50%;
+  transform: translateX(-50%);
+  text-align: center;
+}
+
+.loginTime p {
+  margin: 0;
+}
+
+.loginTime p:first-child {
+  font-size: 1.2rem;
+}
+
+.loginTime p:last-child {
+  font-size: 3rem;
+}
+
+.loginForm {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+}
+
+.loginForm div {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.loginForm input,
+.loginCancel {
+  box-sizing: border-box;
+  height: 30px;
+  font-family: "Chicago";
+  font-size: 16px;
+  background-color: #9f9f9f;
+  border: 2px solid black;
+  padding: 0 10px;
+  text-decoration: none;
+  color: black;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.loginButtons {
+  display: flex;
+  gap: 10px;
+  margin-top: 5%;
+}
+
+.loginForm input[type="submit"],
+.loginCancel {
+  cursor: pointer;
+}
+
+.loginInputs {
+  margin-bottom: 3%;
+}
+
+.loginInputs input {
+  padding: 3px;
+}
+
+.loginForm p {
+  margin-right: 2%;
+  font-size: large;
+}
+
+.loginForm img {
+  width: 30%;
+  margin-bottom: 2%;
 }
 
 footer {
