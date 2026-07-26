@@ -7,6 +7,7 @@ function Upload() {
   const [tags, setTags] = useState([]);
   const [selectedTags, setSelectedTags] = useState([]);
   const [selectedFile, setSelectedFile] = useState(null);
+  const [selectedImages, setSelectedImages] = useState([]);
 
   useEffect(() => {
     async function loadTags() {
@@ -40,6 +41,21 @@ function Upload() {
     if (file) {
       setSelectedFile(file);
     }
+
+    if (!file.name.toLowerCase().endsWith(".md")) {
+      alert("ERROR - Solo se permiten archivos Markdown (.md)");
+
+      event.target.value = "";
+      setSelectedFile(null);
+
+      return;
+    }
+  }
+
+  function handleImagesChange(event) {
+    const files = Array.from(event.target.files);
+
+    setSelectedImages(files);
   }
 
   return (
@@ -51,11 +67,11 @@ function Upload() {
 
           <div className="uploadInputs">
             <p>Titulo:</p>
-            <input type="text" name="" id="" required/>
+            <input type="text" name="" id="" required />
           </div>
           <div className="uploadInputs">
             <p>Dia de creacion:</p>
-            <input type="datetime-local" name="" id="" />
+            <input type="datetime-local" name="" id="" required/>
           </div>
           {/*<div className="formField">
             <p>Tags:</p>
@@ -80,6 +96,8 @@ function Upload() {
               type="file"
               id="file"
               className="uploadFileInput"
+              accept=".md"
+              required
               onChange={handleFileChange}
             />
 
@@ -88,9 +106,43 @@ function Upload() {
             </label>
 
             {selectedFile && (
-              <span className="uploadFileName">{selectedFile.name}</span>
+              <div className="uploadSelectedFile">
+                <span>{selectedFile.name}</span>
+                <span>{selectedFile.type || "text/markdown"}</span>
+              </div>
             )}
           </div>
+
+          <div className="uploadFile">
+            <input
+              type="file"
+              id="images"
+              className="uploadFileInput"
+              accept="image/*"
+              multiple
+              onChange={handleImagesChange}
+            />
+
+            <label htmlFor="images" className="uploadFileButton">
+              Seleccionar imágenes
+            </label>
+
+            {selectedImages.length > 0 && (
+              <div className="uploadImageList">
+                {selectedImages.map((image, index) => (
+                  <div key={index} className="uploadImageItem">
+                    <img src={URL.createObjectURL(image)} alt={image.name} />
+
+                    <div className="uploadImageInfo">
+                      <span>{image.name}</span>
+                      <span>{image.type}</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
           <input type="submit" value="Publicar" />
         </form>
       </BlogWindow>
