@@ -1,17 +1,34 @@
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import * as authService from "../services/authApi";
 
 const AuthContext = createContext(null);
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-  const isAuthenticated = user !== null;
+  useEffect(() => {
+    async function checkAuth() {
+      try {
+        const currentUser = await authService.getCurrentUser();
+
+        setUser(currentUser);
+      } catch {
+        setUser(null);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    checkAuth();
+  }, []);
 
   const login = async (username, password) => {
     await authService.login(username, password);
 
-    setUser({ username });
+    const currentUser = await authService.getCurrentUser();
+
+    setUser(currentUser);
   };
 
   const logout = async () => {
@@ -24,7 +41,8 @@ export function AuthProvider({ children }) {
     <AuthContext.Provider
       value={{
         user,
-        isAuthenticated,
+        isAuthenticated: user !== null,
+        loading,
         login,
         logout,
       }}

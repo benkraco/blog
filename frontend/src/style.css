@@ -68,8 +68,67 @@ header>a {
   margin-left: auto;
 }
 
-header button {
+.userMenu {
+  position: relative;
   margin-left: auto;
+}
+
+.userMenuButton {
+  font-family: "Chicago";
+  font-size: x-large;
+  border: none;
+  background: none;
+  color: black;
+  cursor: pointer;
+}
+
+.userMenuButton:hover {
+  text-decoration: underline;
+}
+
+.userDropdown {
+  position: absolute;
+  top: calc(100% + 5px);
+  right: 0;
+
+  display: flex;
+  flex-direction: column;
+
+  min-width: 200px;
+
+  background-color: #D8D7D5;
+  border: 3px solid black;
+
+  z-index: 100;
+}
+
+.userDropdown a,
+.userDropdown button {
+  width: 100%;
+  box-sizing: border-box;
+
+  padding: 8px 12px;
+
+  font-family: "Chicago";
+  font-size: large;
+
+  color: black;
+  text-decoration: none;
+
+  background-color: #D8D7D5;
+  border: none;
+
+  text-align: left;
+  cursor: pointer;
+}
+
+.userDropdown a:hover,
+.userDropdown button:hover {
+  background-color: black;
+  color: white;
+}
+
+header button {
   font-family: 'Chicago';
   font-size: x-large;
   border: none;
@@ -110,6 +169,11 @@ header button:hover {
   justify-content: flex-end;
   align-items: center;
   color: white;
+}
+
+.windowHeader h3 {
+  margin-right: auto;
+  margin-bottom: 7px;
 }
 
 .windowControls {
@@ -205,6 +269,59 @@ header button:hover {
   font-size: 3rem;
 }
 
+.formRetro {
+  font-family: "Chicago";
+  text-align: center;
+}
+
+.formRetro input,
+.formRetro button,
+.formRetro a {
+  box-sizing: border-box;
+  font-family: "Chicago";
+  font-size: 16px;
+}
+
+/* Campos de texto */
+.formRetro input[type="text"],
+.formRetro input[type="password"],
+.formRetro input[type="datetime-local"] {
+  height: 30px;
+  padding: 3px 6px;
+
+  background-color: white;
+  border: 2px solid black;
+
+  font-family: "Chicago";
+}
+
+/* Botones */
+.formRetro input[type="submit"],
+.formRetro button,
+.formRetro .formCancel {
+  height: 30px;
+
+  padding: 0 10px;
+
+  background-color: #9f9f9f;
+  border: 2px solid black;
+
+  color: black;
+  text-decoration: none;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  cursor: pointer;
+}
+
+.formRetro input[type="submit"]:hover,
+.formRetro button:hover,
+.formRetro .formCancel:hover {
+  background-color: #D8D7D5;
+}
+
 .loginForm {
   position: absolute;
   top: 50%;
@@ -219,31 +336,10 @@ header button:hover {
   align-items: center;
 }
 
-.loginForm input,
-.loginCancel {
-  box-sizing: border-box;
-  height: 30px;
-  font-family: "Chicago";
-  font-size: 16px;
-  background-color: #9f9f9f;
-  border: 2px solid black;
-  padding: 0 10px;
-  text-decoration: none;
-  color: black;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
 .loginButtons {
   display: flex;
   gap: 10px;
   margin-top: 5%;
-}
-
-.loginForm input[type="submit"],
-.loginCancel {
-  cursor: pointer;
 }
 
 .loginInputs {
@@ -262,6 +358,82 @@ header button:hover {
 .loginForm img {
   width: 30%;
   margin-bottom: 2%;
+}
+
+.uploadForm {
+  text-align: center;
+}
+
+.uploadForm h2 {
+  margin-bottom: 2.5%;
+}
+
+.uploadForm input[type="submit"] {
+  margin-top: 1%;
+}
+
+.uploadInputs {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 1%;
+}
+
+.uploadFile {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+
+  margin-top: 20px;
+}
+
+.uploadFileInput {
+  display: none;
+}
+
+.uploadFileButton {
+  height: 30px;
+  padding: 0 10px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #D8D7D5;
+  border: 2px solid black;
+  cursor: pointer;
+}
+
+.uploadFileButton:hover {
+  background-color: #D8D7D5;
+}
+
+.uploadFileName {
+  font-size: 14px;
+  max-width: 250px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.tagList {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+}
+
+.tagList label {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+
+  padding: 4px 8px;
+
+  background-color: #D8D7D5;
+  border: 2px solid black;
+
+  cursor: pointer;
 }
 
 footer {

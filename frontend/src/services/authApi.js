@@ -15,3 +15,9 @@ export async function logout() {
         method: "POST",
     });
 }
+
+export async function getCurrentUser() {
+    const response = await apiFetch("/api/auth/me");
+
+    return response;
+}

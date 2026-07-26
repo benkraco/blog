@@ -6,7 +6,7 @@ function Home() {
   return (
     <>
       <PageTitle title="Home" />
-      <BlogWindow>
+      <BlogWindow title="Home.exe">
         <PostList />
       </BlogWindow>
     </>

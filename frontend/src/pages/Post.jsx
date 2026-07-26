@@ -3,7 +3,7 @@ import PostContent from '../components/blog/PostContent'
 
 function Post() {
   return (
-    <BlogWindow>
+    <BlogWindow title="Post.exe">
       <PostContent />
     </BlogWindow>
   );

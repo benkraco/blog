@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 namespace backend.Controllers;
 
 [ApiController]
-[Route("api/[controller]")]
+[Route("api/tags")]
 public class TagController : ControllerBase
 {
     private readonly TagService _tagService;

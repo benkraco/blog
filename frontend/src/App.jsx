@@ -6,6 +6,10 @@ import LayoutLogin from "./components/layout/LayoutLogin";
 import Home from "./pages/Home";
 import Post from "./pages/Post";
 import Login from "./pages/Login";
+import Upload from "./pages/Upload";
+
+import RedirectHomeRoute from "./routes/RedirectHomeRoute";
+import RedirectLoginRoute from './routes/RedirectLoginRoute'
 
 function App() {
   return (
@@ -17,7 +21,15 @@ function App() {
         </Route>
 
         <Route element={<LayoutLogin />}>
-          <Route path="/login" element={<Login />} />
+          <Route element={<RedirectHomeRoute />}>
+            <Route path="/login" element={<Login />} />
+          </Route>
+        </Route>
+
+        <Route element={<Layout />}>
+          <Route element={<RedirectLoginRoute />}>
+            <Route path="/upload" element={<Upload />} />
+          </Route>
         </Route>
       </Routes>
     </BrowserRouter>

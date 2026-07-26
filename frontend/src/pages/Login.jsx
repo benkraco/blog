@@ -63,7 +63,7 @@ function Login() {
         <p>{time}</p>
       </section>
 
-      <form className="loginForm" onSubmit={handleSubmit}>
+      <form className="formRetro loginForm" onSubmit={handleSubmit}>
         <img src={IconUser} alt="" />
 
         <div className="loginInputs">
@@ -87,7 +87,7 @@ function Login() {
         {error && <ErrorMessage message={error}/>}
 
         <div className="loginButtons">
-          <Link to="/" className="loginCancel">
+          <Link to="/" className="formCancel">
             Cancel
           </Link>
           <input type="submit" value="Login" />

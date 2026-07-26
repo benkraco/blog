@@ -49,4 +49,19 @@ public class AuthController : ControllerBase
         await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
         return Ok();
     }
+
+    [HttpGet("me")]
+    public IActionResult Me()
+    {
+        if (!User.Identity?.IsAuthenticated ?? true)
+        {
+            return Unauthorized();
+        }
+
+        return Ok(new
+        {
+            Id = User.FindFirstValue(ClaimTypes.NameIdentifier),
+            Username = User.FindFirstValue(ClaimTypes.Name)
+        });
+    }
 }
