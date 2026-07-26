@@ -2,6 +2,7 @@ using backend.Data;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using backend.Repositories;
 using backend.Services;
+using backend.Services.Storage;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -57,6 +58,8 @@ builder.Services.AddScoped<UserService>();
 builder.Services.AddScoped<PostService>();
 builder.Services.AddScoped<TagService>();
 builder.Services.AddScoped<PostTagService>();
+
+builder.Services.AddScoped<IStorageService, CloudflareR2StorageService>();
 
 var app = builder.Build();
 
