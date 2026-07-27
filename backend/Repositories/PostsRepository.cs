@@ -76,9 +76,9 @@ public class PostRepository
                 title,
                 slug,
                 content,
-                publishedAt,
-                updatedAt,
-                createdAt
+                "publishedAt",
+                "updatedAt",
+                "createdAt"
             )
             VALUES (
                 @Id,
@@ -104,7 +104,7 @@ public class PostRepository
             SET
                 title = @Title,
                 content = @Content,
-                updatedAt = @UpdatedAt
+                "updatedAt" = @UpdatedAt
             WHERE id = @Id
             RETURNING *
             """;

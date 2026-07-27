@@ -5,7 +5,7 @@ export async function apiFetch(endpoint, options = {}) {
         ...options,
         credentials: "include",
         headers: {
-            "Content-Type": "application/json",
+            ...(!(options.body instanceof FormData) && { "Content-Type": "application/json" }),
             ...options.headers
         }
     });

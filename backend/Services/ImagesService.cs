@@ -1,73 +1,119 @@
 using backend.Repositories;
+using backend.Services.Storage;
+using ImageMagick;
 
 namespace backend.Services;
 
 public class ImageService
 {
     private readonly ImageRepository _imageRepository;
+    private readonly IStorageService _storageService;
 
-    public ImageService(ImageRepository imageRepository)
+    public ImageService(
+        ImageRepository imageRepository,
+        IStorageService storageService)
     {
         _imageRepository = imageRepository;
+        _storageService = storageService;
     }
 
-    public async Task<IEnumerable<Image>> GetImagesByPostIdAsync(Guid postId)
+    public async Task<Image> UploadAsync(
+        Guid postId,
+        IFormFile file,
+        string alt,
+        string description,
+        int displayOrder)
     {
-        return await _imageRepository.GetByPostIdAsync(postId);
+        if (file is null || file.Length == 0)
+        {
+            throw new ArgumentException(
+                "ERROR - El archivo de imagen es inválido."
+            );
+        }
+
+        if (!file.ContentType.StartsWith("image/"))
+        {
+            throw new ArgumentException(
+                "ERROR - El archivo debe ser una imagen."
+            );
+        }
+
+        var imageId = Guid.NewGuid();
+
+        await using var inputStream = file.OpenReadStream();
+
+        using var image = new MagickImage(inputStream);
+
+        int width = (int)image.Width;
+        int height = (int)image.Height;
+
+        // Convertir a WebP
+        image.Format = MagickFormat.WebP;
+
+        // Calidad de compresión
+        image.Quality = 80;
+
+        await using var outputStream = new MemoryStream();
+
+        image.Write(outputStream);
+
+        outputStream.Position = 0;
+
+        string fileName =
+            $"posts/{postId}/{imageId}.webp";
+
+        await _storageService.UploadAsync(
+            outputStream,
+            fileName,
+            "image/webp"
+        );
+
+        var imageEntity = new Image
+        {
+            Id = imageId,
+            PostId = postId,
+            Url = fileName,
+            Alt = alt,
+            DisplayOrder = displayOrder,
+            Name = Path.GetFileNameWithoutExtension(file.FileName) + ".webp",
+            Description = description,
+            TakenAt = DateTime.UtcNow,
+            Width = width,
+            Height = height,
+            FileSize = outputStream.Length,
+            MimeType = "image/webp"
+        };
+
+        var createdImage =
+            await _imageRepository.CreateAsync(imageEntity);
+
+        if (createdImage is null)
+        {
+            // Si falla PostgreSQL después de subir a R2,
+            // eliminamos la imagen de R2 para no dejar basura.
+            await _storageService.DeleteAsync(fileName);
+
+            throw new InvalidOperationException(
+                "ERROR - No se pudo guardar la imagen en la base de datos."
+            );
+        }
+
+        return createdImage;
     }
 
-    public async Task<Image?> GetImageByIdAsync(Guid id)
+    public async Task<bool> DeleteAsync(Guid id)
     {
-        return await _imageRepository.GetByIdAsync(id);
-    }
+        var image = await _imageRepository.GetByIdAsync(id);
 
-    public async Task<Image?> CreateAsync(Image image)
-    {
-        if (image.PostId == Guid.Empty)
+        if (image is null)
         {
-            throw new ArgumentException("El post de la imagen es obligatorio.");
+            return false;
         }
 
-        if (string.IsNullOrWhiteSpace(image.Url))
-        {
-            throw new ArgumentException("La URL de la imagen es obligatoria.");
-        }
+        await _storageService.DeleteAsync(image.Url);
 
-        if (string.IsNullOrWhiteSpace(image.Name))
-        {
-            throw new ArgumentException("El nombre de la imagen es obligatorio.");
-        }
+        await _imageRepository.DeleteAsync(id);
 
-        if (image.DisplayOrder < 0)
-        {
-            throw new ArgumentException("El orden de la imagen no puede ser negativo.");
-        }
-
-        if (image.Width <= 0)
-        {
-            throw new ArgumentException("El ancho de la imagen debe ser mayor a 0.");
-        }
-
-        if (image.Height <= 0)
-        {
-            throw new ArgumentException("El alto de la imagen debe ser mayor a 0.");
-        }
-
-        if (image.FileSize <= 0)
-        {
-            throw new ArgumentException("El tamaño de la imagen debe ser mayor a 0.");
-        }
-
-        if (string.IsNullOrWhiteSpace(image.MimeType))
-        {
-            throw new ArgumentException("El tipo MIME de la imagen es obligatorio.");
-        }
-
-        return await _imageRepository.CreateAsync(image);
-    }
-
-    public async Task<bool> DeleteImageAsync(Guid id)
-    {
-        return await _imageRepository.DeleteAsync(id);
+        return true;
     }
 }

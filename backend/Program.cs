@@ -52,12 +52,14 @@ builder.Services.AddScoped<UserRepository>();
 builder.Services.AddScoped<PostRepository>();
 builder.Services.AddScoped<TagRepository>();
 builder.Services.AddScoped<PostTagRepository>();
+builder.Services.AddScoped<ImageRepository>();
 
 // Services
 builder.Services.AddScoped<UserService>();
 builder.Services.AddScoped<PostService>();
 builder.Services.AddScoped<TagService>();
 builder.Services.AddScoped<PostTagService>();
+builder.Services.AddScoped<ImageService>();
 
 builder.Services.AddScoped<IStorageService, CloudflareR2StorageService>();
 

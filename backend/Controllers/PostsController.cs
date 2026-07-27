@@ -52,8 +52,9 @@ public class PostController : ControllerBase
 
     [HttpPost]
     [Authorize]
+    [Consumes("multipart/form-data")]
     public async Task<IActionResult> CreatePost(
-        [FromBody] CreatePostRequest request)
+     [FromForm] CreatePostRequest request)
     {
         try
         {

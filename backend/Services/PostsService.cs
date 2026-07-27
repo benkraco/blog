@@ -7,10 +7,14 @@ namespace backend.Services;
 public class PostService
 {
     private readonly PostRepository _postRepository;
+    private readonly ImageService _imageService;
 
-    public PostService(PostRepository postRepository)
+    public PostService(
+        PostRepository postRepository,
+        ImageService imageService)
     {
         _postRepository = postRepository;
+        _imageService = imageService;
     }
 
     public async Task<IEnumerable<Post>> GetAllPostsAsync()
@@ -32,7 +36,24 @@ public class PostService
     {
         if (string.IsNullOrWhiteSpace(request.Title))
         {
-            throw new ArgumentException("ERROR - El titulo del post no puede ser vacio");
+            throw new ArgumentException(
+                "ERROR - El titulo del post no puede ser vacio"
+            );
+        }
+
+        if (request.MarkdownFile is null)
+        {
+            throw new ArgumentException(
+                "ERROR - El archivo Markdown es obligatorio"
+            );
+        }
+
+        if (!Path.GetExtension(request.MarkdownFile.FileName)
+            .Equals(".md", StringComparison.OrdinalIgnoreCase))
+        {
+            throw new ArgumentException(
+                "ERROR - El archivo debe ser un Markdown (.md)"
+            );
         }
 
         string title = request.Title.Trim();
@@ -41,16 +62,27 @@ public class PostService
 
         if (string.IsNullOrWhiteSpace(slug))
         {
-            throw new ArgumentException("ERROR - El titulo no puede generar un slug valido");
+            throw new ArgumentException(
+                "ERROR - El titulo no puede generar un slug valido"
+            );
         }
 
-        bool slugExists = await _postRepository.ExistsBySlugAsync(slug);
+        bool slugExists =
+            await _postRepository.ExistsBySlugAsync(slug);
 
         if (slugExists)
         {
             throw new InvalidOperationException(
                 "ERROR - Un post con ese slug ya existe"
             );
+        }
+
+        string content;
+
+        using (var reader = new StreamReader(
+            request.MarkdownFile.OpenReadStream()))
+        {
+            content = await reader.ReadToEndAsync();
         }
 
         DateTime now = DateHelper.Now();
@@ -60,15 +92,28 @@ public class PostService
             Id = Guid.NewGuid(),
             Title = title,
             Slug = slug,
-            Content = request.Content,
+            Content = content,
             CreatedAt = request.CreatedAt,
             PublishedAt = now,
             UpdatedAt = now
         };
 
-        return await _postRepository.CreateAsync(post);
-    }
+        var createdPost = await _postRepository.CreateAsync(post);
 
+        for (int i = 0; i < request.Images.Count; i++)
+        {
+            await _imageService.UploadAsync(
+                createdPost.Id,
+                request.Images[i],
+                request.Images[i].FileName,
+                string.Empty,
+                i
+            );
+        }
+
+        return createdPost;
+    }
+    
     public async Task<Post?> UpdatePostAsync(Post post)
     {
         return await _postRepository.UpdateAsync(post);
