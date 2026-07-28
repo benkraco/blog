@@ -3,6 +3,7 @@ import BlogWindow from "../components/blog/BlogWindow";
 import { useState, useEffect } from "react";
 import { getAllTags } from "../services/tagApi";
 import { createPost } from "../services/postApi";
+import { useNavigate } from "react-router-dom";
 
 function Upload() {
   const [tags, setTags] = useState([]);
@@ -12,6 +13,8 @@ function Upload() {
 
   const [title, setTitle] = useState("");
   const [createdAt, setCreatedAt] = useState("");
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     async function loadTags() {
@@ -91,9 +94,8 @@ function Upload() {
         images: selectedImages,
       });
 
-      console.log("Post creado:", post);
-
       alert("Post publicado correctamente.");
+      navigate(`/post/${post.slug}`);
     } catch (error) {
       console.error("Error al publicar el post:", error);
 

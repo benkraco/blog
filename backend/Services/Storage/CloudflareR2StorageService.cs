@@ -9,6 +9,7 @@ public class CloudflareR2StorageService : IStorageService
     private readonly string _accountId;
     private readonly string _accessKeyId;
     private readonly string _secretAccessKey;
+    private readonly string _publicUrl;
 
     public CloudflareR2StorageService(IConfiguration configuration)
     {
@@ -16,6 +17,7 @@ public class CloudflareR2StorageService : IStorageService
         _accessKeyId = configuration["CloudflareR2:AccessKeyId"]!;
         _secretAccessKey = configuration["CloudflareR2:SecretAccessKey"]!;
         _bucketName = configuration["CloudflareR2:BucketName"]!;
+        _publicUrl = configuration["CloudflareR2:PublicUrl"]!;
     }
 
     public async Task<string> UploadAsync(
@@ -24,12 +26,12 @@ public class CloudflareR2StorageService : IStorageService
         string contentType)
     {
         var url = $"https://{_accountId}.r2.cloudflarestorage.com/{_bucketName}/{fileName}";
-        
+
         // Leer el stream completamente
         var memoryStream = new MemoryStream();
         await fileStream.CopyToAsync(memoryStream);
         byte[] fileBytes = memoryStream.ToArray();
-        
+
         using var client = new HttpClient();
         using var request = new HttpRequestMessage(HttpMethod.Put, url)
         {
@@ -45,7 +47,7 @@ public class CloudflareR2StorageService : IStorageService
         var response = await client.SendAsync(request);
         response.EnsureSuccessStatusCode();
 
-        return fileName;
+        return $"{_publicUrl}/{fileName}";
     }
 
     private void SignRequest(HttpRequestMessage request, byte[] body)

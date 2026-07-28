@@ -7,4 +7,5 @@ public class Post
     public DateTime PublishedAt { get; set; }
     public DateTime UpdatedAt { get; set; }
     public DateTime CreatedAt { get; set; }
+    public List<Image> Images { get; set; } = new();
 }

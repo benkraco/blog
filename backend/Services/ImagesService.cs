@@ -62,7 +62,8 @@ public class ImageService
         string fileName =
             $"posts/{postId}/{imageId}.webp";
 
-        await _storageService.UploadAsync(
+        // Subir imagen a R2 y obtener URL pública
+        var publicUrl = await _storageService.UploadAsync(
             outputStream,
             fileName,
             "image/webp"
@@ -72,7 +73,7 @@ public class ImageService
         {
             Id = imageId,
             PostId = postId,
-            Url = fileName,
+            Url = publicUrl,
             Alt = alt,
             DisplayOrder = displayOrder,
             Name = Path.GetFileNameWithoutExtension(file.FileName) + ".webp",

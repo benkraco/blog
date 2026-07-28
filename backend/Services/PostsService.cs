@@ -8,15 +8,17 @@ public class PostService
 {
     private readonly PostRepository _postRepository;
     private readonly ImageService _imageService;
+    private readonly ImageRepository _imageRepository;
 
     public PostService(
         PostRepository postRepository,
-        ImageService imageService)
+        ImageService imageService,
+        ImageRepository imageRepository)
     {
         _postRepository = postRepository;
         _imageService = imageService;
+        _imageRepository = imageRepository;
     }
-
     public async Task<IEnumerable<Post>> GetAllPostsAsync()
     {
         return await _postRepository.GetAllAsync();
@@ -29,7 +31,18 @@ public class PostService
 
     public async Task<Post?> GetPostBySlugAsync(string slug)
     {
-        return await _postRepository.GetBySlugAsync(slug);
+        var post = await _postRepository.GetBySlugAsync(slug);
+
+        if (post is null)
+        {
+            return null;
+        }
+
+        var images = await _imageRepository.GetByPostIdAsync(post.Id);
+
+        post.Images = images.ToList();
+
+        return post;
     }
 
     public async Task<Post> CreateAsync(CreatePostRequest request)
@@ -113,7 +126,7 @@ public class PostService
 
         return createdPost;
     }
-    
+
     public async Task<Post?> UpdatePostAsync(Post post)
     {
         return await _postRepository.UpdateAsync(post);
