@@ -1,15 +1,21 @@
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import LoadingMessage from "../ui/Loading";
 import ErrorMessage from "../ui/Error";
 import PageTitle from "../ui/PageTitle";
+import useAuth from "../../hooks/useAuth";
 
 function PostContent() {
   const { slug } = useParams();
+  const navigate = useNavigate();
+  const { isAuthenticated } = useAuth();
 
   const [post, setPost] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
 
   const [selectedImageIndex, setSelectedImageIndex] = useState(null);
 
@@ -119,6 +125,30 @@ function PostContent() {
     };
   }, [selectedImageIndex, post]);
 
+  async function handleDelete() {
+    try {
+      const response = await fetch(
+        `${import.meta.env.VITE_API_URL}/api/posts/${post.id}`,
+        {
+          method: "DELETE",
+          credentials: "include",
+        },
+      );
+
+      if (!response.ok) {
+        throw new Error("No se pudo borrar el post");
+      }
+
+      alert("Post borrado correctamente.");
+
+      navigate("/");
+    } catch (error) {
+      console.error("Error al borrar el post:", error);
+
+      alert("No se pudo borrar el post.");
+    }
+  }
+
   if (loading) {
     return <LoadingMessage />;
   }
@@ -146,12 +176,12 @@ function PostContent() {
         }
 
         return (
-          <div
-            className="postImage"
-            key={index}
-            onClick={() => openGallery(imageIndex)}
-          >
-            <img src={image.url} alt={image.alt || image.name} />
+          <div className="postImage" key={index}>
+            <img
+              src={image.url}
+              alt={image.alt || image.name}
+              onClick={() => openGallery(imageIndex)}
+            />
           </div>
         );
       }
@@ -192,6 +222,13 @@ function PostContent() {
           {renderContent(post.content, post.images)}
         </div>
       </article>
+
+      {isAuthenticated && (
+        <div className="postActions">
+          <button onClick={() => setShowEditModal(true)}>Editar</button>
+          <button onClick={() => setShowDeleteModal(true)}>Borrar</button>
+        </div>
+      )}
 
       {selectedImage && (
         <div className="imageGalleryOverlay" onClick={closeGallery}>
@@ -241,6 +278,22 @@ function PostContent() {
             <button className="imageGalleryNext" onClick={showNextImage}>
               ›
             </button>
+          </div>
+        </div>
+      )}
+
+      {showDeleteModal && (
+        <div className="postModalOverlay">
+          <div className="postModal">
+            <h2>¿Estás seguro?</h2>
+
+            <p>¿Querés borrar el post "{post.title}"?</p>
+
+            <div className="postModalActions">
+              <button onClick={() => setShowDeleteModal(false)}>No</button>
+
+              <button onClick={handleDelete}>Sí</button>
+            </div>
           </div>
         </div>
       )}

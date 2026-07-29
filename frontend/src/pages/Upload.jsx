@@ -21,8 +21,6 @@ function Upload() {
       try {
         const data = await getAllTags();
 
-        console.log("TAGS RECIBIDOS:", data);
-
         setTags(data);
       } catch (error) {
         console.error("Error al cargar los tags:", error);

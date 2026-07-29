@@ -140,7 +140,8 @@ header button:hover {
   text-decoration: underline;
 }
 
-.layoutMain {
+.layoutMain,
+.loginMain {
   display: flex;
   justify-content: center;
   min-height: 0;
@@ -237,7 +238,6 @@ header button:hover {
   text-align: center;
   margin-top: 1%;
   margin-bottom: 1%;
-  cursor: pointer;
 }
 
 .postImage img {
@@ -407,16 +407,13 @@ header button:hover {
   font-size: 16px;
 }
 
-/* Campos de texto */
 .formRetro input[type="text"],
 .formRetro input[type="password"],
 .formRetro input[type="datetime-local"] {
   height: 30px;
   padding: 3px 6px;
-
   background-color: white;
   border: 2px solid black;
-
   font-family: "Chicago";
 }
 
@@ -424,19 +421,14 @@ header button:hover {
 .formRetro button,
 .formRetro .formCancel {
   height: 30px;
-
   padding: 0 10px;
-
-  background-color: #9f9f9f;
+  background-color: white;
   border: 2px solid black;
-
   color: black;
   text-decoration: none;
-
   display: inline-flex;
   align-items: center;
   justify-content: center;
-
   cursor: pointer;
 }
 
@@ -623,6 +615,72 @@ header button:hover {
   border: 2px solid black;
 
   cursor: pointer;
+}
+
+.postActions button {
+  cursor: pointer;
+}
+
+.postModalOverlay {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: rgba(0, 0, 0, 0.75);
+  z-index: 1000;
+}
+
+.postModal {
+  position: relative;
+  width: 90%;
+  max-width: 500px;
+  padding: 25px;
+  background: white;
+  text-align: center;
+}
+
+.postModal h2 {
+  margin-top: 0;
+}
+
+.postActions {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+  margin-top: 2%;
+}
+
+.postModalActions {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+  margin-top: 2%;
+}
+
+.postActions button,
+.postModalActions button {
+  min-width: 90px;
+  height: 32px;
+  padding: 0 14px;
+  font-family: "Chicago";
+  font-size: 16px;
+  color: black;
+  background-color: #D8D7D5;
+  border: 2px solid black;
+  cursor: pointer;
+}
+
+.postActions button:hover,
+.postModalActions button:hover {
+  background-color: #9f9f9f;
+}
+
+.postActions button:active,
+.postModalActions button:active {
+  transform: translate(2px, 2px);
 }
 
 footer {
