@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import LoadingMessage from "../ui/Loading";
 import ErrorMessage from "../ui/Error";
 import PageTitle from "../ui/PageTitle";
+import UpdateContent from "./UpdateContent";
 import useAuth from "../../hooks/useAuth";
 
 function PostContent() {
@@ -294,6 +295,21 @@ function PostContent() {
 
               <button onClick={handleDelete}>Sí</button>
             </div>
+          </div>
+        </div>
+      )}
+
+      {showEditModal && (
+        <div className="postModalOverlay">
+          <div className="postModal">
+            <UpdateContent
+              post={post}
+              onClose={() => setShowEditModal(false)}
+              onUpdated={(updatedPost) => {
+                setPost(updatedPost);
+                setShowEditModal(false);
+              }}
+            />
           </div>
         </div>
       )}

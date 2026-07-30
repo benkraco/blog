@@ -127,13 +127,128 @@ public class PostService
         return createdPost;
     }
 
-    public async Task<Post?> UpdatePostAsync(Post post)
+    public async Task<Post?> UpdatePostAsync(
+        Guid id,
+        UpdatePostRequest request)
     {
-        return await _postRepository.UpdateAsync(post);
-    }
+        var post = await _postRepository.GetByIdAsync(id);
 
+        if (post is null)
+        {
+            return null;
+        }
+
+        if (string.IsNullOrWhiteSpace(request.Title))
+        {
+            throw new ArgumentException(
+                "ERROR - El titulo del post no puede ser vacio"
+            );
+        }
+
+        string title = request.Title.Trim();
+
+        string slug = SlugHelper.Generate(title);
+
+        if (string.IsNullOrWhiteSpace(slug))
+        {
+            throw new ArgumentException(
+                "ERROR - El titulo no puede generar un slug valido"
+            );
+        }
+
+        bool slugExists =
+            await _postRepository.ExistsBySlugExceptIdAsync(
+                slug,
+                id
+            );
+
+        if (slugExists)
+        {
+            throw new InvalidOperationException(
+                "ERROR - Un post con ese slug ya existe"
+            );
+        }
+
+        string content = post.Content;
+
+        if (request.MarkdownFile is not null)
+        {
+            if (!Path.GetExtension(request.MarkdownFile.FileName)
+                .Equals(".md", StringComparison.OrdinalIgnoreCase))
+            {
+                throw new ArgumentException(
+                    "ERROR - El archivo debe ser un Markdown (.md)"
+                );
+            }
+
+            using var reader = new StreamReader(
+                request.MarkdownFile.OpenReadStream()
+            );
+
+            content = await reader.ReadToEndAsync();
+        }
+
+        DateTime now = DateHelper.Now();
+
+        post.Title = title;
+        post.Slug = slug;
+        post.Content = content;
+        post.UpdatedAt = now;
+
+        var updatedPost =
+            await _postRepository.UpdateAsync(post);
+
+        if (updatedPost is null)
+        {
+            return null;
+        }
+
+        foreach (var imageId in request.DeletedImageIds)
+        {
+            await _imageService.DeleteAsync(imageId);
+        }
+
+        var existingImages =
+            await _imageRepository.GetByPostIdAsync(id);
+
+        int displayOrder = existingImages.Any()
+            ? existingImages.Max(x => x.DisplayOrder) + 1
+            : 0;
+
+        for (int i = 0; i < request.Images.Count; i++)
+        {
+            await _imageService.UploadAsync(
+                id,
+                request.Images[i],
+                request.Images[i].FileName,
+                string.Empty,
+                displayOrder + i
+            );
+        }
+
+        var finalImages =
+            await _imageRepository.GetByPostIdAsync(id);
+
+        updatedPost.Images = finalImages.ToList();
+
+        return updatedPost;
+    }
     public async Task<bool> DeletePostAsync(Guid id)
     {
+        var post = await _postRepository.GetByIdAsync(id);
+
+        if (post is null)
+        {
+            return false;
+        }
+
+        var images = await _imageRepository.GetByPostIdAsync(id);
+
+        foreach (var image in images)
+        {
+            await _imageService.DeleteAsync(image.Id);
+        }
+
         return await _postRepository.DeleteAsync(id);
     }
 }

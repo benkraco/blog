@@ -95,21 +95,50 @@ public class PostRepository
         return await connection.QuerySingleOrDefaultAsync<Post>(sql, post);
     }
 
+    public async Task<bool> ExistsBySlugExceptIdAsync(
+    string slug,
+    Guid id)
+    {
+        using var connection = _factory.Create();
+
+        const string sql = """
+        SELECT EXISTS (
+            SELECT 1
+            FROM "Posts"
+            WHERE slug = @Slug
+            AND id != @Id
+        );
+        """;
+
+        return await connection.QuerySingleAsync<bool>(
+            sql,
+            new
+            {
+                Slug = slug,
+                Id = id
+            }
+        );
+    }
+
     public async Task<Post?> UpdateAsync(Post post)
     {
         using var connection = _factory.Create();
 
         const string sql = """
-            UPDATE "Posts"
-            SET
-                title = @Title,
-                content = @Content,
-                "updatedAt" = @UpdatedAt
-            WHERE id = @Id
-            RETURNING *
-            """;
+        UPDATE "Posts"
+        SET
+            title = @Title,
+            slug = @Slug,
+            content = @Content,
+            "updatedAt" = @UpdatedAt
+        WHERE id = @Id
+        RETURNING *
+        """;
 
-        return await connection.QuerySingleOrDefaultAsync<Post>(sql, post);
+        return await connection.QuerySingleOrDefaultAsync<Post>(
+            sql,
+            post
+        );
     }
 
     public async Task<bool> DeleteAsync(Guid id)

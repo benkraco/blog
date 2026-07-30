@@ -608,12 +608,9 @@ header button:hover {
   display: flex;
   align-items: center;
   gap: 4px;
-
   padding: 4px 8px;
-
   background-color: #D8D7D5;
   border: 2px solid black;
-
   cursor: pointer;
 }
 
@@ -629,15 +626,20 @@ header button:hover {
   align-items: center;
   background: rgba(0, 0, 0, 0.75);
   z-index: 1000;
+  padding: 20px;
+  box-sizing: border-box;
 }
 
 .postModal {
   position: relative;
   width: 90%;
-  max-width: 500px;
+  max-width: 700px;
+  max-height: 90vh;
   padding: 25px;
   background: white;
   text-align: center;
+  overflow-y: auto;
+  box-sizing: border-box;
 }
 
 .postModal h2 {
@@ -680,6 +682,310 @@ header button:hover {
 
 .postActions button:active,
 .postModalActions button:active {
+  transform: translate(2px, 2px);
+}
+
+.updateContent {
+  width: 100%;
+}
+
+.updateContent h2 {
+  margin: 0 0 25px;
+  text-align: center;
+}
+
+.updateContent form {
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+}
+
+/* =========================
+   TÍTULO
+========================= */
+
+.updateField {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.updateField > label {
+  font-size: large;
+}
+
+.updateTitleField {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+}
+
+.updateTitleField label {
+  font-size: large;
+  white-space: nowrap;
+}
+
+.updateTitleField input[type="text"] {
+  box-sizing: border-box;
+  width: 100%;
+  min-width: 0;
+  padding: 6px;
+  font-family: "Chicago";
+  font-size: 16px;
+  background-color: white;
+  border: 2px solid black;
+}
+
+.updateTitleField input[type="text"]:focus {
+  outline: none;
+  background-color: #eeeeee;
+}
+
+/* =========================
+   ARCHIVO MARKDOWN
+========================= */
+
+.updateMarkdown {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.updateMarkdown label {
+  font-size: large;
+}
+
+.updateFileInput {
+  display: none;
+}
+
+.updateFileButton {
+  height: 30px;
+  padding: 0 10px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #D8D7D5;
+  border: 2px solid black;
+  cursor: pointer;
+}
+
+.updateFileButton:hover {
+  background-color: #D8D7D5;
+}
+
+.updateFileButton:active {
+  border-style: inset;
+}
+
+.updateSelectedFile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  padding: 10px;
+  background-color: #eeeeee;
+  border: 1px solid #999999;
+  max-width: 100%;
+}
+
+.updateSelectedFile span:first-child {
+  font-weight: bold;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 100%;
+}
+
+.updateSelectedFile span:last-child {
+  font-size: 13px;
+  color: #555555;
+}
+
+/* =========================
+   IMÁGENES ACTUALES
+========================= */
+
+.updateImages {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+}
+
+.updateImages h3 {
+  margin: 0;
+}
+
+.updateImagesList {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 20px;
+  width: 100%;
+}
+
+.updateImage {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 10px;
+  background-color: #eeeeee;
+  border: 1px solid #999999;
+  width: 180px;
+  box-sizing: border-box;
+}
+
+.updateImage img {
+  display: block;
+  width: 160px;
+  height: 120px;
+  object-fit: contain;
+  background-color: white;
+  border: 1px solid #999999;
+}
+
+.updateImage button {
+  width: 100%;
+  height: 30px;
+  padding: 0 8px;
+  font-family: "Chicago";
+  font-size: 14px;
+  color: black;
+  background-color: #D8D7D5;
+  border: 2px solid black;
+  cursor: pointer;
+}
+
+.updateImage button:hover {
+  background-color: #9f9f9f;
+}
+
+.updateImage button:active {
+  transform: translate(2px, 2px);
+}
+
+/* =========================
+   IMÁGENES NUEVAS
+========================= */
+
+.updateNewImages {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.updateNewImages > label {
+  font-size: large;
+}
+
+.updateImagesInput {
+  display: none;
+}
+
+.updateImagesButton {
+  height: 30px;
+  padding: 0 10px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #D8D7D5;
+  border: 2px solid black;
+  cursor: pointer;
+}
+
+.updateImagesButton:hover {
+  background-color: #D8D7D5;
+}
+
+.updateImagesButton:active {
+  border-style: inset;
+}
+
+.updateNewImagesList {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 15px;
+  width: 100%;
+}
+
+.updateNewImage {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 10px;
+  background-color: #eeeeee;
+  border: 1px solid #999999;
+  width: 180px;
+  box-sizing: border-box;
+}
+
+.updateNewImage span:first-child {
+  width: 100%;
+  font-weight: bold;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  text-align: center;
+}
+
+.updateNewImage span:nth-child(2) {
+  font-size: 13px;
+  color: #555555;
+}
+
+.updateNewImage button {
+  width: 100%;
+  height: 30px;
+  padding: 0 8px;
+  font-family: "Chicago";
+  font-size: 14px;
+  color: black;
+  background-color: #D8D7D5;
+  border: 2px solid black;
+  cursor: pointer;
+}
+
+.updateNewImage button:hover {
+  background-color: #9f9f9f;
+}
+
+.updateNewImage button:active {
+  transform: translate(2px, 2px);
+}
+
+.updateContent .postModalActions {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+  margin-top: 5px;
+}
+
+.updateContent .postModalActions button {
+  min-width: 90px;
+  height: 32px;
+  padding: 0 14px;
+  font-family: "Chicago";
+  font-size: 16px;
+  color: black;
+  background-color: #D8D7D5;
+  border: 2px solid black;
+  cursor: pointer;
+}
+
+.updateContent .postModalActions button:hover {
+  background-color: #9f9f9f;
+}
+
+.updateContent .postModalActions button:active {
   transform: translate(2px, 2px);
 }
 

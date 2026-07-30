@@ -118,19 +118,36 @@ public class CloudflareR2StorageService : IStorageService
         return BitConverter.ToString(bytes).Replace("-", "").ToLowerInvariant();
     }
 
-    public async Task DeleteAsync(string fileName)
+    private string ExtractFileName(string fileUrl)
     {
-        var url = $"https://{_accountId}.r2.cloudflarestorage.com/{_bucketName}/{fileName}";
+        var uri = new Uri(fileUrl);
+
+        return uri.AbsolutePath.TrimStart('/');
+    }
+
+    public async Task DeleteAsync(string fileUrl)
+    {
+        var fileName = ExtractFileName(fileUrl);
+
+        var url =
+            $"https://{_accountId}.r2.cloudflarestorage.com/{_bucketName}/{fileName}";
 
         using var client = new HttpClient();
-        using var request = new HttpRequestMessage(HttpMethod.Delete, url);
 
-        request.Headers.Add("Host", $"{_accountId}.r2.cloudflarestorage.com");
+        using var request = new HttpRequestMessage(
+            HttpMethod.Delete,
+            url
+        );
 
-        // Firmar la request
+        request.Headers.Add(
+            "Host",
+            $"{_accountId}.r2.cloudflarestorage.com"
+        );
+
         SignRequestForDelete(request);
 
         var response = await client.SendAsync(request);
+
         response.EnsureSuccessStatusCode();
     }
 
@@ -143,22 +160,64 @@ public class CloudflareR2StorageService : IStorageService
         var method = "DELETE";
         var canonicalUri = request.RequestUri!.AbsolutePath;
         var canonicalQuerystring = "";
-        var canonicalHeaders = $"host:{_accountId}.r2.cloudflarestorage.com\nx-amz-content-sha256:UNSIGNED-PAYLOAD\nx-amz-date:{amzDate}\n";
-        var signedHeaders = "host;x-amz-content-sha256;x-amz-date";
+
+        var canonicalHeaders =
+            $"host:{_accountId}.r2.cloudflarestorage.com\n" +
+            $"x-amz-content-sha256:UNSIGNED-PAYLOAD\n" +
+            $"x-amz-date:{amzDate}\n";
+
+        var signedHeaders =
+            "host;x-amz-content-sha256;x-amz-date";
+
         var payloadHash = "UNSIGNED-PAYLOAD";
 
-        var canonicalRequest = $"{method}\n{canonicalUri}\n{canonicalQuerystring}\n{canonicalHeaders}\n{signedHeaders}\n{payloadHash}";
+        var canonicalRequest =
+            $"{method}\n" +
+            $"{canonicalUri}\n" +
+            $"{canonicalQuerystring}\n" +
+            $"{canonicalHeaders}\n" +
+            $"{signedHeaders}\n" +
+            $"{payloadHash}";
 
         var algorithm = "AWS4-HMAC-SHA256";
-        var credentialScope = $"{dateStamp}/auto/s3/aws4_request";
-        var canonicalRequestHash = Sha256Hash(canonicalRequest);
-        var stringToSign = $"{algorithm}\n{amzDate}\n{credentialScope}\n{canonicalRequestHash}";
 
-        var signature = CalculateSignature(stringToSign, dateStamp);
-        var authorizationHeader = $"{algorithm} Credential={_accessKeyId}/{credentialScope}, SignedHeaders={signedHeaders}, Signature={signature}";
+        var credentialScope =
+            $"{dateStamp}/auto/s3/aws4_request";
 
-        request.Headers.Add("x-amz-date", amzDate);
-        request.Headers.Add("x-amz-content-sha256", "UNSIGNED-PAYLOAD");
-        request.Headers.Add("Authorization", authorizationHeader);
+        var canonicalRequestHash =
+            Sha256Hash(canonicalRequest);
+
+        var stringToSign =
+            $"{algorithm}\n" +
+            $"{amzDate}\n" +
+            $"{credentialScope}\n" +
+            $"{canonicalRequestHash}";
+
+        var signature =
+            CalculateSignature(
+                stringToSign,
+                dateStamp
+            );
+
+        var authorizationHeader =
+            $"{algorithm} " +
+            $"Credential={_accessKeyId}/{credentialScope}, " +
+            $"SignedHeaders={signedHeaders}, " +
+            $"Signature={signature}";
+
+        request.Headers.Add(
+            "x-amz-date",
+            amzDate
+        );
+
+        request.Headers.Add(
+            "x-amz-content-sha256",
+            "UNSIGNED-PAYLOAD"
+        );
+
+        request.Headers.TryAddWithoutValidation(
+            "Authorization",
+            authorizationHeader
+        );
     }
 }

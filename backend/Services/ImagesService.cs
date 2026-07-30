@@ -8,13 +8,16 @@ public class ImageService
 {
     private readonly ImageRepository _imageRepository;
     private readonly IStorageService _storageService;
+    private readonly IConfiguration _configuration;
 
     public ImageService(
         ImageRepository imageRepository,
-        IStorageService storageService)
+        IStorageService storageService,
+        IConfiguration configuration)
     {
         _imageRepository = imageRepository;
         _storageService = storageService;
+        _configuration = configuration;
     }
 
     public async Task<Image> UploadAsync(
@@ -111,7 +114,12 @@ public class ImageService
             return false;
         }
 
-        await _storageService.DeleteAsync(image.Url);
+        var publicUrl = _configuration["CloudflareR2:PublicUrl"]!;
+
+        var fileName = image.Url
+            .Replace($"{publicUrl}/", "");
+
+        await _storageService.DeleteAsync(fileName);
 
         await _imageRepository.DeleteAsync(id);
 
