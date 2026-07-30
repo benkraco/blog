@@ -565,7 +565,7 @@ header button:hover {
   width: 180px;
 }
 
-.uploadImageItem img {
+.uploadImageItem>img {
   display: block;
   width: 160px;
   height: 120px;
@@ -700,10 +700,6 @@ header button:hover {
   gap: 25px;
 }
 
-/* =========================
-   TÍTULO
-========================= */
-
 .updateField {
   display: flex;
   flex-direction: column;
@@ -711,7 +707,7 @@ header button:hover {
   gap: 10px;
 }
 
-.updateField > label {
+.updateField>label {
   font-size: large;
 }
 
@@ -742,10 +738,6 @@ header button:hover {
   outline: none;
   background-color: #eeeeee;
 }
-
-/* =========================
-   ARCHIVO MARKDOWN
-========================= */
 
 .updateMarkdown {
   display: flex;
@@ -804,10 +796,6 @@ header button:hover {
   font-size: 13px;
   color: #555555;
 }
-
-/* =========================
-   IMÁGENES ACTUALES
-========================= */
 
 .updateImages {
   display: flex;
@@ -869,9 +857,6 @@ header button:hover {
   transform: translate(2px, 2px);
 }
 
-/* =========================
-   IMÁGENES NUEVAS
-========================= */
 
 .updateNewImages {
   display: flex;
@@ -880,7 +865,7 @@ header button:hover {
   gap: 12px;
 }
 
-.updateNewImages > label {
+.updateNewImages>label {
   font-size: large;
 }
 
@@ -987,6 +972,59 @@ header button:hover {
 
 .updateContent .postModalActions button:active {
   transform: translate(2px, 2px);
+}
+
+.uploadImageActions {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+}
+
+.uploadImageActions button {
+  width: 35px;
+  height: 30px;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #D8D7D5;
+  border: 2px solid black;
+  cursor: pointer;
+}
+
+.updateButtonDeleteImgs {
+  background-color: #D8D7D5;
+  padding: 4px;
+  font-family: 'Chicago';
+  cursor: pointer;
+  border: 2px solid black;
+}
+
+.updateButtonDeleteImgs:hover {
+  background-color: #9f9f9f;
+}
+
+.uploadImageActions button:hover:not(:disabled) {
+  background-color: #9f9f9f;
+}
+
+.uploadImageActions button:active:not(:disabled) {
+  transform: translate(2px, 2px);
+}
+
+.uploadImageActions button:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.uploadImageActions img {
+  width: 16px;
+  height: 16px;
+  object-fit: contain;
+  border: none;
+  background: none;
 }
 
 footer {

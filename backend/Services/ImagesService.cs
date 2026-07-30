@@ -114,10 +114,21 @@ public class ImageService
             return false;
         }
 
-        var publicUrl = _configuration["CloudflareR2:PublicUrl"]!;
+        var publicUrl =
+            _configuration["CloudflareR2:PublicUrl"]!;
 
-        var fileName = image.Url
-            .Replace($"{publicUrl}/", "");
+        if (!image.Url.StartsWith(
+            $"{publicUrl}/",
+            StringComparison.OrdinalIgnoreCase))
+        {
+            throw new InvalidOperationException(
+                "La URL de la imagen no pertenece al almacenamiento R2 configurado."
+            );
+        }
+
+        var fileName = image.Url[
+            $"{publicUrl}/".Length..
+        ];
 
         await _storageService.DeleteAsync(fileName);
 

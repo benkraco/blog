@@ -211,28 +211,102 @@ public class PostService
         var existingImages =
             await _imageRepository.GetByPostIdAsync(id);
 
-        int displayOrder = existingImages.Any()
-            ? existingImages.Max(x => x.DisplayOrder) + 1
-            : 0;
-
-        for (int i = 0; i < request.Images.Count; i++)
-        {
-            await _imageService.UploadAsync(
-                id,
-                request.Images[i],
-                request.Images[i].FileName,
-                string.Empty,
-                displayOrder + i
+        var existingImagesDictionary =
+            existingImages.ToDictionary(
+                image => image.Id
             );
+
+        var uploadedImages = new List<Image>();
+
+        foreach (var image in request.Images)
+        {
+            var uploadedImage =
+                await _imageService.UploadAsync(
+                    id,
+                    image,
+                    image.FileName,
+                    string.Empty,
+                    0
+                );
+
+            uploadedImages.Add(uploadedImage);
+        }
+
+        for (int i = 0; i < request.ImageOrder.Count; i++)
+        {
+            string imageReference =
+                request.ImageOrder[i];
+
+            if (imageReference.StartsWith(
+                "existing:",
+                StringComparison.OrdinalIgnoreCase))
+            {
+                string idString =
+                    imageReference["existing:".Length..];
+
+                if (!Guid.TryParse(
+                    idString,
+                    out Guid imageId))
+                {
+                    throw new ArgumentException(
+                        "ERROR - El orden contiene un ID de imagen existente inválido."
+                    );
+                }
+
+                if (!existingImagesDictionary.ContainsKey(
+                    imageId))
+                {
+                    continue;
+                }
+
+                await _imageRepository.UpdateDisplayOrderAsync(
+                    imageId,
+                    i
+                );
+            }
+            else if (imageReference.StartsWith(
+                "new:",
+                StringComparison.OrdinalIgnoreCase))
+            {
+                string indexString =
+                    imageReference["new:".Length..];
+
+                if (!int.TryParse(
+                    indexString,
+                    out int newImageIndex))
+                {
+                    throw new ArgumentException(
+                        "ERROR - El orden contiene una referencia de imagen nueva inválida."
+                    );
+                }
+
+                if (newImageIndex < 0 ||
+                    newImageIndex >= uploadedImages.Count)
+                {
+                    throw new ArgumentException(
+                        "ERROR - El orden contiene una imagen nueva inexistente."
+                    );
+                }
+
+                var uploadedImage =
+                    uploadedImages[newImageIndex];
+
+                await _imageRepository.UpdateDisplayOrderAsync(
+                    uploadedImage.Id,
+                    i
+                );
+            }
         }
 
         var finalImages =
             await _imageRepository.GetByPostIdAsync(id);
 
-        updatedPost.Images = finalImages.ToList();
+        updatedPost.Images =
+            finalImages.ToList();
 
         return updatedPost;
     }
+
     public async Task<bool> DeletePostAsync(Guid id)
     {
         var post = await _postRepository.GetByIdAsync(id);

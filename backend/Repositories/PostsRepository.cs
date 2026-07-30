@@ -19,7 +19,7 @@ public class PostRepository
         const string sql = """
             SELECT *
             FROM "Posts"
-            ORDER BY "createdAt" ASC
+            ORDER BY "publishedAt" ASC
             """;
 
         return await connection.QueryAsync<Post>(sql);

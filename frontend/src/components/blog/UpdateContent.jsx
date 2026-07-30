@@ -1,18 +1,43 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import flechaAbajo from "../../assets/Icons/down-long-solid.png";
+import flechaArriba from "../../assets/Icons/up-long-solid.png";
 
 function UpdateContent({ post, onClose, onUpdated }) {
   const [title, setTitle] = useState(post.title);
   const [markdownFile, setMarkdownFile] = useState(null);
 
-  const [newImages, setNewImages] = useState([]);
+  const [images, setImages] = useState([]);
   const [deletedImageIds, setDeletedImageIds] = useState([]);
 
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    const existingImages = post.images.map((image) => ({
+      type: "existing",
+      id: image.id,
+      url: image.url,
+      name: image.name,
+      alt: image.alt,
+    }));
+
+    setImages(existingImages);
+    setDeletedImageIds([]);
+  }, [post]);
 
   function handleMarkdownChange(event) {
     const file = event.target.files[0];
 
     if (!file) {
+      setMarkdownFile(null);
+      return;
+    }
+
+    if (!file.name.toLowerCase().endsWith(".md")) {
+      alert("ERROR - Solo se permiten archivos Markdown (.md)");
+
+      event.target.value = "";
+      setMarkdownFile(null);
+
       return;
     }
 
@@ -22,18 +47,68 @@ function UpdateContent({ post, onClose, onUpdated }) {
   function handleImagesChange(event) {
     const files = Array.from(event.target.files);
 
-    setNewImages((currentImages) => [...currentImages, ...files]);
+    const newImageItems = files.map((file) => ({
+      type: "new",
+      id: crypto.randomUUID(),
+      file,
+      url: URL.createObjectURL(file),
+      name: file.name,
+    }));
+
+    setImages((currentImages) => [...currentImages, ...newImageItems]);
 
     event.target.value = "";
   }
 
-  function handleDeleteExistingImage(imageId) {
-    setDeletedImageIds((currentIds) => [...currentIds, imageId]);
+  function moveImageUp(index) {
+    if (index === 0) {
+      return;
+    }
+
+    setImages((currentImages) => {
+      const newImages = [...currentImages];
+
+      [newImages[index - 1], newImages[index]] = [
+        newImages[index],
+        newImages[index - 1],
+      ];
+
+      return newImages;
+    });
   }
 
-  function handleRemoveNewImage(index) {
-    setNewImages((currentImages) =>
-      currentImages.filter((_, imageIndex) => imageIndex !== index),
+  function moveImageDown(index) {
+    if (index === images.length - 1) {
+      return;
+    }
+
+    setImages((currentImages) => {
+      const newImages = [...currentImages];
+
+      [newImages[index], newImages[index + 1]] = [
+        newImages[index + 1],
+        newImages[index],
+      ];
+
+      return newImages;
+    });
+  }
+
+  function handleDeleteExistingImage(imageId) {
+    setDeletedImageIds((currentIds) => [...currentIds, imageId]);
+
+    setImages((currentImages) =>
+      currentImages.filter(
+        (image) => !(image.type === "existing" && image.id === imageId),
+      ),
+    );
+  }
+
+  function handleRemoveNewImage(imageId) {
+    setImages((currentImages) =>
+      currentImages.filter(
+        (image) => !(image.type === "new" && image.id === imageId),
+      ),
     );
   }
 
@@ -51,12 +126,26 @@ function UpdateContent({ post, onClose, onUpdated }) {
         formData.append("MarkdownFile", markdownFile);
       }
 
+      const newImages = images.filter((image) => image.type === "new");
+
       newImages.forEach((image) => {
-        formData.append("Images", image);
+        formData.append("Images", image.file);
       });
 
       deletedImageIds.forEach((imageId) => {
         formData.append("DeletedImageIds", imageId);
+      });
+
+      images.forEach((image) => {
+        if (image.type === "existing") {
+          formData.append("ImageOrder", `existing:${image.id}`);
+        }
+
+        if (image.type === "new") {
+          const newImageIndex = newImages.indexOf(image);
+
+          formData.append("ImageOrder", `new:${newImageIndex}`);
+        }
       });
 
       const response = await fetch(
@@ -75,20 +164,18 @@ function UpdateContent({ post, onClose, onUpdated }) {
       }
 
       const updatedPost = await response.json();
+
       onUpdated(updatedPost);
 
       alert("Posteo editado correctamente");
     } catch (error) {
       console.error("Error al actualizar el post:", error);
+
       alert("ERROR - No se pudo editar el posteo");
     } finally {
       setLoading(false);
     }
   }
-
-  const visibleImages = post.images.filter(
-    (image) => !deletedImageIds.includes(image.id),
-  );
 
   return (
     <div className="updateContent">
@@ -109,7 +196,8 @@ function UpdateContent({ post, onClose, onUpdated }) {
 
         <div className="updateTitleField">
           <div className="updateMarkdown">
-            <label htmlFor="updateTitle">Archivo nuevo:</label>
+            <label htmlFor="updateMarkdown">Archivo nuevo:</label>
+
             <label htmlFor="updateMarkdown" className="updateFileButton">
               Seleccionar archivo
             </label>
@@ -133,21 +221,56 @@ function UpdateContent({ post, onClose, onUpdated }) {
         </div>
 
         <div className="updateImages">
-          <h3>Imágenes actuales:</h3>
+          <h3>Imágenes del post:</h3>
 
-          {visibleImages.length === 0 ? (
+          {images.length === 0 ? (
             <p>Este post no tiene imágenes.</p>
           ) : (
-            <div className="updateImagesList">
-              {visibleImages.map((image) => (
-                <div className="updateImage" key={image.id}>
+            <div className="uploadImageList">
+              {images.map((image, index) => (
+                <div key={image.id} className="uploadImageItem">
                   <img src={image.url} alt={image.alt || image.name} />
+
+                  <div className="uploadImageInfo">
+                    <span>
+                      #{index} — {image.name}
+                    </span>
+
+                    <span>
+                      {image.type === "existing"
+                        ? "Imagen actual"
+                        : image.file.type}
+                    </span>
+                  </div>
+
+                  <div className="uploadImageActions">
+                    <button
+                      type="button"
+                      onClick={() => moveImageUp(index)}
+                      disabled={index === 0}
+                    >
+                      <img src={flechaArriba} alt="Mover arriba" />
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => moveImageDown(index)}
+                      disabled={index === images.length - 1}
+                    >
+                      <img src={flechaAbajo} alt="Mover abajo" />
+                    </button>
+                  </div>
 
                   <button
                     type="button"
-                    onClick={() => handleDeleteExistingImage(image.id)}
+                    onClick={() =>
+                      image.type === "existing"
+                        ? handleDeleteExistingImage(image.id)
+                        : handleRemoveNewImage(image.id)
+                    }
+                    className="updateButtonDeleteImgs"
                   >
-                    Eliminar
+                    {image.type === "existing" ? "Eliminar" : "Quitar"}
                   </button>
                 </div>
               ))}
@@ -157,7 +280,8 @@ function UpdateContent({ post, onClose, onUpdated }) {
 
         <div className="updateTitleField">
           <div className="updateMarkdown">
-            <label htmlFor="updateTitle">Imagenes nuevas:</label>
+            <label htmlFor="updateImages">Imágenes nuevas:</label>
+
             <label htmlFor="updateImages" className="updateFileButton">
               Seleccionar imágenes
             </label>
@@ -171,25 +295,6 @@ function UpdateContent({ post, onClose, onUpdated }) {
               onChange={handleImagesChange}
             />
           </div>
-
-          {newImages.length > 0 && (
-            <div className="uploadImageList">
-              {newImages.map((image, index) => (
-                <div className="updateSelectedFile" key={index}>
-                  <span>{image.name}</span>
-
-                  <span>{(image.size / 1024).toFixed(2)} KB</span>
-
-                  <button
-                    type="button"
-                    onClick={() => handleRemoveNewImage(index)}
-                  >
-                    Quitar
-                  </button>
-                </div>
-              ))}
-            </div>
-          )}
         </div>
 
         <div className="postModalActions">

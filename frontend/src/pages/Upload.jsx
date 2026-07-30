@@ -4,6 +4,8 @@ import { useState, useEffect } from "react";
 import { getAllTags } from "../services/tagApi";
 import { createPost } from "../services/postApi";
 import { useNavigate } from "react-router-dom";
+import flechaAbajo from "../assets/Icons/down-long-solid.png";
+import flechaArriba from "../assets/Icons/up-long-solid.png";
 
 function Upload() {
   const [tags, setTags] = useState([]);
@@ -64,6 +66,42 @@ function Upload() {
     const files = Array.from(event.target.files);
 
     setSelectedImages(files);
+
+    event.target.value = "";
+  }
+
+  function moveImageUp(index) {
+    if (index === 0) {
+      return;
+    }
+
+    setSelectedImages((currentImages) => {
+      const newImages = [...currentImages];
+
+      [newImages[index - 1], newImages[index]] = [
+        newImages[index],
+        newImages[index - 1],
+      ];
+
+      return newImages;
+    });
+  }
+
+  function moveImageDown(index) {
+    if (index === selectedImages.length - 1) {
+      return;
+    }
+
+    setSelectedImages((currentImages) => {
+      const newImages = [...currentImages];
+
+      [newImages[index], newImages[index + 1]] = [
+        newImages[index + 1],
+        newImages[index],
+      ];
+
+      return newImages;
+    });
   }
 
   async function handleSubmit(event) {
@@ -73,16 +111,6 @@ function Upload() {
       alert("Debes seleccionar un archivo Markdown.");
       return;
     }
-
-    const formData = new FormData();
-
-    formData.append("Title", title);
-    formData.append("CreatedAt", createdAt);
-    formData.append("MarkdownFile", selectedFile);
-
-    selectedImages.forEach((image) => {
-      formData.append("Images", image);
-    });
 
     try {
       const post = await createPost({
@@ -104,12 +132,14 @@ function Upload() {
   return (
     <>
       <PageTitle title="Upload" />
+
       <BlogWindow title="Upload.exe">
         <form className="formRetro uploadForm" onSubmit={handleSubmit}>
           <h2>Subir post</h2>
 
           <div className="uploadInputs">
             <p>Titulo:</p>
+
             <input
               type="text"
               value={title}
@@ -117,8 +147,10 @@ function Upload() {
               required
             />
           </div>
+
           <div className="uploadInputs">
             <p>Dia de creacion:</p>
+
             <input
               type="datetime-local"
               value={createdAt}
@@ -126,6 +158,7 @@ function Upload() {
               required
             />
           </div>
+
           {/*<div className="formField">
             <p>Tags:</p>
 
@@ -144,6 +177,7 @@ function Upload() {
               ))}
             </div>
           </div>*/}
+
           <div className="uploadFile">
             <input
               type="file"
@@ -161,6 +195,7 @@ function Upload() {
             {selectedFile && (
               <div className="uploadSelectedFile">
                 <span>{selectedFile.name}</span>
+
                 <span>{selectedFile.type || "text/markdown"}</span>
               </div>
             )}
@@ -183,7 +218,10 @@ function Upload() {
             {selectedImages.length > 0 && (
               <div className="uploadImageList">
                 {selectedImages.map((image, index) => (
-                  <div key={index} className="uploadImageItem">
+                  <div
+                    key={`${image.name}-${image.lastModified}`}
+                    className="uploadImageItem"
+                  >
                     <img src={URL.createObjectURL(image)} alt={image.name} />
 
                     <div className="uploadImageInfo">
@@ -192,6 +230,24 @@ function Upload() {
                       </span>
 
                       <span>{image.type}</span>
+                    </div>
+
+                    <div className="uploadImageActions">
+                      <button
+                        type="button"
+                        onClick={() => moveImageUp(index)}
+                        disabled={index === 0}
+                      >
+                        <img src={flechaArriba} alt="Flecha arriba" />
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => moveImageDown(index)}
+                        disabled={index === selectedImages.length - 1}
+                      >
+                        <img src={flechaAbajo} alt="Flecha arriba" />
+                      </button>
                     </div>
                   </div>
                 ))}

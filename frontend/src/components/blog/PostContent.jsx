@@ -163,7 +163,12 @@ function PostContent() {
   }
 
   function renderContent(content, images) {
-    const parts = content.split(/(\[\[image:\d+\]\])/g);
+    const normalizedContent = content.replace(
+      /\\?\[\\?\[image:(\d+)\\?\]\\?\]/g,
+      "[[image:$1]]",
+    );
+
+    const parts = normalizedContent.split(/(\[\[image:\d+\]\])/g);
 
     return parts.map((part, index) => {
       const imageMatch = part.match(/^\[\[image:(\d+)\]\]$/);
@@ -187,7 +192,24 @@ function PostContent() {
         );
       }
 
-      return <p key={index}>{part}</p>;
+      if (!part.trim()) {
+        return null;
+      }
+
+      return (
+        <p key={index}>
+          {part
+            .split("\n")
+            .filter((line) => line.trim() !== "")
+            .map((line, lineIndex, lines) => (
+              <span key={lineIndex}>
+                {line}
+
+                {lineIndex < lines.length - 1 && <br />}
+              </span>
+            ))}
+        </p>
+      );
     });
   }
 

@@ -99,4 +99,27 @@ public class ImageRepository
 
         return rowsAffected > 0;
     }
+
+    public async Task<bool> UpdateDisplayOrderAsync(
+    Guid id,
+    int displayOrder)
+    {
+        using var connection = _factory.Create();
+
+        const string sql = """
+        UPDATE "Images"
+        SET "displayOrder" = @DisplayOrder
+        WHERE id = @Id
+        """;
+
+        var rowsAffected = await connection.ExecuteAsync(
+            sql,
+            new
+            {
+                Id = id,
+                DisplayOrder = displayOrder
+            });
+
+        return rowsAffected > 0;
+    }
 }

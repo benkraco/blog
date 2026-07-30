@@ -9,4 +9,6 @@ public class UpdatePostRequest
     public List<IFormFile> Images { get; set; } = new();
 
     public List<Guid> DeletedImageIds { get; set; } = new();
+
+    public List<string> ImageOrder { get; set; } = new();
 }

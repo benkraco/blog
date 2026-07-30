@@ -118,17 +118,8 @@ public class CloudflareR2StorageService : IStorageService
         return BitConverter.ToString(bytes).Replace("-", "").ToLowerInvariant();
     }
 
-    private string ExtractFileName(string fileUrl)
+    public async Task DeleteAsync(string fileName)
     {
-        var uri = new Uri(fileUrl);
-
-        return uri.AbsolutePath.TrimStart('/');
-    }
-
-    public async Task DeleteAsync(string fileUrl)
-    {
-        var fileName = ExtractFileName(fileUrl);
-
         var url =
             $"https://{_accountId}.r2.cloudflarestorage.com/{_bucketName}/{fileName}";
 
@@ -148,7 +139,16 @@ public class CloudflareR2StorageService : IStorageService
 
         var response = await client.SendAsync(request);
 
-        response.EnsureSuccessStatusCode();
+        if (!response.IsSuccessStatusCode)
+        {
+            var responseBody = await response.Content.ReadAsStringAsync();
+
+            throw new HttpRequestException(
+                $"Error al eliminar archivo de R2. " +
+                $"Status: {(int)response.StatusCode} {response.StatusCode}. " +
+                $"Response: {responseBody}"
+            );
+        }
     }
 
     private void SignRequestForDelete(HttpRequestMessage request)

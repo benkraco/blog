@@ -82,42 +82,42 @@ public class PostController : ControllerBase
         }
     }
 
-[HttpPut("{id:guid}")]
-[Authorize]
-[Consumes("multipart/form-data")]
-public async Task<IActionResult> UpdatePost(
-    Guid id,
-    [FromForm] UpdatePostRequest request)
-{
-    try
+    [HttpPut("{id:guid}")]
+    [Authorize]
+    [Consumes("multipart/form-data")]
+    public async Task<IActionResult> UpdatePost(
+        Guid id,
+        [FromForm] UpdatePostRequest request)
     {
-        var updatedPost = await _postService.UpdatePostAsync(
-            id,
-            request
-        );
-
-        if (updatedPost is null)
+        try
         {
-            return NotFound();
+            var updatedPost = await _postService.UpdatePostAsync(
+                id,
+                request
+            );
+
+            if (updatedPost is null)
+            {
+                return NotFound();
+            }
+
+            return Ok(updatedPost);
         }
-
-        return Ok(updatedPost);
-    }
-    catch (ArgumentException ex)
-    {
-        return BadRequest(new
+        catch (ArgumentException ex)
         {
-            message = ex.Message
-        });
-    }
-    catch (InvalidOperationException ex)
-    {
-        return Conflict(new
+            return BadRequest(new
+            {
+                message = ex.Message
+            });
+        }
+        catch (InvalidOperationException ex)
         {
-            message = ex.Message
-        });
+            return Conflict(new
+            {
+                message = ex.Message
+            });
+        }
     }
-}
 
     [HttpDelete("{id:guid}")]
     [Authorize]
