@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import flechaAbajo from "../../assets/Icons/down-long-solid.png";
 import flechaArriba from "../../assets/Icons/up-long-solid.png";
+import { apiFetch } from "../../services/api";
 
 function UpdateContent({ post, onClose, onUpdated }) {
   const [title, setTitle] = useState(post.title);
@@ -148,22 +149,10 @@ function UpdateContent({ post, onClose, onUpdated }) {
         }
       });
 
-      const response = await fetch(
-        `${import.meta.env.VITE_API_URL}/api/posts/${post.id}`,
-        {
-          method: "PUT",
-          credentials: "include",
-          body: formData,
-        },
-      );
-
-      if (!response.ok) {
-        const data = await response.json().catch(() => null);
-
-        throw new Error(data?.message || "No se pudo actualizar el post.");
-      }
-
-      const updatedPost = await response.json();
+      const updatedPost = await apiFetch(`/api/posts/${post.id}`, {
+        method: "PUT",
+        body: formData,
+      });
 
       onUpdated(updatedPost);
 
@@ -171,7 +160,7 @@ function UpdateContent({ post, onClose, onUpdated }) {
     } catch (error) {
       console.error("Error al actualizar el post:", error);
 
-      alert("ERROR - No se pudo editar el posteo");
+      alert(error.message || "ERROR - No se pudo editar el posteo");
     } finally {
       setLoading(false);
     }

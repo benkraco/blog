@@ -5,6 +5,7 @@ import ErrorMessage from "../ui/Error";
 import PageTitle from "../ui/PageTitle";
 import UpdateContent from "./UpdateContent";
 import useAuth from "../../hooks/useAuth";
+import { apiFetch } from "../../services/api";
 
 function PostContent() {
   const { slug } = useParams();
@@ -66,15 +67,7 @@ function PostContent() {
   useEffect(() => {
     async function loadPost() {
       try {
-        const response = await fetch(
-          `${import.meta.env.VITE_API_URL}/api/posts/slug/${slug}`,
-        );
-
-        if (!response.ok) {
-          throw new Error("No se pudo cargar el post");
-        }
-
-        const data = await response.json();
+        const data = await apiFetch(`/api/posts/slug/${slug}`);
 
         setPost(data);
       } catch (error) {
@@ -128,17 +121,9 @@ function PostContent() {
 
   async function handleDelete() {
     try {
-      const response = await fetch(
-        `${import.meta.env.VITE_API_URL}/api/posts/${post.id}`,
-        {
-          method: "DELETE",
-          credentials: "include",
-        },
-      );
-
-      if (!response.ok) {
-        throw new Error("No se pudo borrar el post");
-      }
+      await apiFetch(`/api/posts/${post.id}`, {
+        method: "DELETE",
+      });
 
       alert("Post borrado correctamente.");
 
