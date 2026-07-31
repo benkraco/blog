@@ -1027,6 +1027,10 @@ header button:hover {
   background: none;
 }
 
+.noPosts {
+  text-align: center;
+}
+
 footer {
   background-color: #D8D7D5;
   width: 100%;
@@ -1050,4 +1054,89 @@ footer p:nth-child(2) {
 
 footer p:nth-child(3) {
   text-align: right;
+}
+
+.imageGalleryClose,
+.imageGalleryPrevious,
+.imageGalleryNext {
+  color: black;
+}
+
+@media (max-width: 600px) {
+  .layout {
+    width: 95%;
+    height: 95dvh;
+    min-height: 95dvh;
+    margin: 2.5dvh auto;
+    border-radius: 12px;
+  }
+
+  header {
+    padding: 10px;
+  }
+
+  header img {
+    width: 30px;
+  }
+
+  header nav ul {
+    gap: 10px;
+  }
+
+  header nav ul li {
+    margin-left: 0;
+  }
+
+  header a,
+  .userMenuButton {
+    font-size: large;
+  }
+
+  .userDropdown {
+    min-width: 170px;
+  }
+
+  .layoutMain,
+  .loginMain {
+    padding: 20px;
+  }
+
+  .blogWindow {
+    border-width: 5px;
+  }
+
+  .windowHeader {
+    height: 25px;
+  }
+
+  .windowControls {
+    gap: 5px;
+    padding-right: 5px;
+    margin-bottom: 3px;
+  }
+
+  .windowControls img {
+    width: 15px;
+  }
+
+  .blogWindowContent {
+    padding: 20px;
+  }
+
+  footer {
+    padding: 5px 10px;
+    font-size: small;
+  }
+
+  .postImage img {
+    width: auto;
+    max-width: 80%;
+    max-height: 500px;
+    margin-top: 2%;
+    margin-bottom: 2%;
+  }
+
+  .postContent {
+    margin-top: 5%;
+  }
 }

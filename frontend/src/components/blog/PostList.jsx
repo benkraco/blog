@@ -31,6 +31,10 @@ function PostList() {
   if (error) {
     return <ErrorMessage message={error} />;
   }
+
+  if (posts.length === 0) {
+    return <p className="noPosts">Aun no se ha hecho ningun posteo</p>;
+  }
   return (
     <>
       {posts.map((post) => (

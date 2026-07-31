@@ -17,7 +17,7 @@ function Header() {
 
   return (
     <header>
-      <img src="../../../public/img/icon.png" alt="Logo" />
+      <img src="/img/icon.png" alt="Logo" />
 
       <nav>
         <ul>

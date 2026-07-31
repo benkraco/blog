@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+Disallow: /login
+Disallow: /upload
+
+Sitemap: https://blog.benkraco.com/sitemap.xml
