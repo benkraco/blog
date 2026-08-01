@@ -6,6 +6,8 @@ import PageTitle from "../ui/PageTitle";
 import UpdateContent from "./UpdateContent";
 import useAuth from "../../hooks/useAuth";
 import { apiFetch } from "../../services/api";
+import ReactMarkdown from "react-markdown";
+import remarkBreaks from "remark-breaks";
 
 function PostContent() {
   const { slug } = useParams();
@@ -181,20 +183,11 @@ function PostContent() {
         return null;
       }
 
-      return (
-        <p key={index}>
-          {part
-            .split("\n")
-            .filter((line) => line.trim() !== "")
-            .map((line, lineIndex, lines) => (
-              <span key={lineIndex}>
-                {line}
-
-                {lineIndex < lines.length - 1 && <br />}
-              </span>
-            ))}
-        </p>
-      );
+return (
+  <ReactMarkdown key={index} remarkPlugins={[remarkBreaks]}>
+    {part}
+  </ReactMarkdown>
+);
     });
   }
 

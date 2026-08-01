@@ -234,6 +234,9 @@ header button:hover {
   margin-top: 2%;
 }
 
+.postContent p {
+  margin: 0 0 15px 0;
+}
 .postImage {
   text-align: center;
   margin-top: 1%;
@@ -241,7 +244,7 @@ header button:hover {
 }
 
 .postImage img {
-  width: 15%;
+  width: 45%;
   max-width: 100%;
   cursor: pointer;
 }
